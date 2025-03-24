@@ -3,26 +3,28 @@ from keras.src.layers import Dense, Flatten, Dropout
 from keras.src.models import Model
 import os
 
-# טעינת MobileNetV2 ללא השכבות העליונות
+# Load MobileNetV2 without the top layers
 base_model = MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights="imagenet")
 
-# הוספת שכבות מותאמות ל-3 קטגוריות
+# Add custom layers for 3 categories
 x = Flatten()(base_model.output)
 x = Dense(128, activation="relu")(x)
-x = Dropout(0.3)(x)  # Dropout למניעת Overfitting
-x = Dense(3, activation="softmax")(x)  # שלוש קטגוריות: malignant, benign, unknown
+x = Dropout(0.3)(x)  # Dropout to prevent overfitting
+x = Dense(3, activation="softmax")(x)  # Three categories: malignant, benign, unknown
 
-# בניית המודל הסופי
+# Build the final model
 model = Model(inputs=base_model.input, outputs=x)
 
-# הקפאת השכבות של MobileNetV2 למניעת אימון מחדש
+# Freeze the base MobileNetV2 layers to prevent retraining
 for layer in base_model.layers:
     layer.trainable = False
 
-# קומפילציה של המודל
+# Compile the model
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
+# Create the models folder if it doesn't exist
 if not os.path.exists("models"):
     os.makedirs("models")
 
+# Save the model
 model.save("models/skin_lesion_classifier.h5")
