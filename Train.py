@@ -3,11 +3,13 @@ from keras.src.saving import load_model
 import tensorflow as tf
 
 tf.config.run_functions_eagerly(True)
-# טעינת המודל השמור (אם בנית אותו בקובץ אחר)
+
+# Load the saved model (if it was built in another file)
 model = load_model("models/skin_lesion_classifier.h5")
 
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-# **📌 טוענים מחדש את הנתונים עבור האימון**
+
+# Reload the data for training
 train_datagen = ImageDataGenerator(validation_split=0.2)
 
 train_generator = train_datagen.flow_from_directory(
@@ -26,7 +28,7 @@ val_generator = train_datagen.flow_from_directory(
     subset="validation"
 )
 
-# **📌 ביצוע האימון**
+# Train the model
 history = model.fit(
     train_generator,
     validation_data=val_generator,
@@ -34,7 +36,7 @@ history = model.fit(
     verbose=1
 )
 
-print("✔ האימון הסתיים!")
+print("✔ Training completed!")
 
-# **📌 שמירת המודל מחדש לאחר האימון**
+# Save the model again after training
 model.save("models/skin_lesion_classifier_trained.h5")
