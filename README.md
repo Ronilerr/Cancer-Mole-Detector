@@ -1,95 +1,94 @@
+Cancer Mole Detector
+This project is an IoT-based smart skin health monitoring system that detects and classifies skin lesions (such as moles) using computer vision and a trained machine learning model. It integrates an ESP32-CAM module, Python-based Flask server, and a convolutional neural network (CNN) to provide real-time feedback to the user.
 
-# Skin Lesion Classification using Deep Learning
+Features
+Captures images of skin lesions using ESP32-CAM
 
-This project classifies skin lesions into three categories:
-- **malignant**
-- **benign**
-- **unknown**
+Sends images to a local Flask server for analysis
 
-It uses transfer learning with **MobileNetV2** and data augmentation techniques
-to improve performance on dermoscopic images from the ISIC 2019 dataset.
+Classifies lesions using a pre-trained CNN model
 
----
+Displays results via Blynk IoT mobile application
 
-## Project Overview
+Provides audio feedback and mock email notification
 
-- **Dataset**: ISIC 2019 dermoscopic images  
-- **Preprocessing**: All images resized to 224x224  
-- **Augmentation**: Performed using `Augmentor` (rotation, flip, zoom, brightness)  
-- **Model**: MobileNetV2 with custom dense layers  
-- **Training**: Using `ImageDataGenerator` with 80/20 train-validation split  
-- **Output**: Trained Keras model saved as `.h5` file  
+Folder Structure
+Model.py: Defines the CNN architecture.
 
----
+Train.py: Handles training of the CNN model.
 
-## Folder Structure
+datagenerator.py: Generates training and validation datasets.
 
-```
-dataset/
-├── images/                      # Original images
-├── processed_images/           # Resized images
-│   └── output/
-│       ├── malignant/
-│       ├── benign/
-│       └── unknown/
-├── diagnoses.csv               # CSV file containing image IDs and labels
+run_model.py: Loads the trained model and makes predictions.
 
-models/
-├── skin_lesion_classifier.h5           # Base model before training
-├── skin_lesion_classifier_trained.h5   # Final model after training
-```
+main.py: Coordinates the overall application logic.
 
----
+server.py: Flask server that receives image uploads and serves predictions.
 
-## Main Steps
+Selector.py: Helper script for selecting images.
 
-1. **Preprocess Images**  
-   Resize all images to 224x224 using OpenCV.
+pixels.py: Preprocessing utilities.
 
-2. **Augment Dataset**  
-   Use `Augmentor` to create variations of images with transformations.
+SkinScan_Notifier.ino: Arduino code for ESP32 to take photos and connect to the Flask server.
 
-3. **Organize Dataset**  
-   Move images into `malignant`, `benign`, or `unknown` folders based on the CSV.
+models/skin_lesion_classifier.h5: The saved trained model.
 
-4. **Build Model**  
-   Load MobileNetV2 without top layers.  
-   Add Dense, Dropout, and Softmax output layer for 3 classes.
+predictions.json: Stores recent prediction results.
 
-5. **Train the Model**  
-   Use `ImageDataGenerator` to load and train with validation split.  
-   Save the trained model to the `models` folder.
+Requirements
+Python
+Python 3.7+
 
----
+Flask
 
-## Requirements
+TensorFlow / Keras
 
-Install the required libraries before running the scripts:
+NumPy
 
-```bash
-pip install tensorflow keras opencv-python pandas Augmentor
-```
+Pillow
 
----
 
-## Future Improvements
+Arduino
+ESP32 board package
 
-- Add model evaluation metrics (confusion matrix, F1-score)
-- Enable fine-tuning of base MobileNetV2 layers
-- Create a web interface for real-time predictions
-- Use a larger dataset to improve generalization
+Blynk library
 
----
+Arduino IDE or PlatformIO
 
-## Important Notes
+How It Works
+The ESP32-CAM captures an image and uploads it to a local server.
 
-- Ensure the `diagnoses.csv` file has at least two columns: `image` and `dx`
-- File names of images should match the `image` field in the CSV
-- Run preprocessing, augmentation, and sorting scripts before training
+The Flask server preprocesses the image and runs inference using the trained CNN model.
 
----
+The result is saved in predictions.json.
 
-## License
+The ESP32 retrieves the classification result via HTTP.
 
-This project is intended for educational and research use.  
-If using ISIC data, please follow the dataset's usage guidelines.
+The classification is displayed in Blynk and spoken via a buzzer/speaker.
+
+A fake email notification is generated for demo purposes.
+
+Getting Started
+Train your model using Train.py or use the provided model in the models directory.
+
+Run the Flask server:
+
+bash
+Copy
+Edit
+python server.py
+Flash the SkinScan_Notifier.ino to the ESP32-CAM using the Arduino IDE.
+
+Connect the device to WiFi and test image capture.
+
+Use the Blynk app to view predictions.
+
+Notes
+This project is for educational and demo purposes only.
+
+The model should not be used for real medical diagnosis.
+
+A good dataset to use for training is the ISIC 2019 Skin Lesion dataset.
+
+License
+This project is provided under the MIT License.
