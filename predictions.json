@@ -1,0 +1,15 @@
+{
+    "data": [
+        {
+            "image_path": "/Users/ronirabinovitz/Downloads/20250311231441.jpg",
+            "predicted class": "benign",
+            "prediction": [
+                [
+                    0.023039719089865685,
+                    0.9691094160079956,
+                    0.007850825786590576
+                ]
+            ]
+        }
+    ]
+}
